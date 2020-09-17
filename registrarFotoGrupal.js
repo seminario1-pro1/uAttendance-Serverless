@@ -10,9 +10,9 @@ const DDB = new AWS.DynamoDB({
 
 function uploadImageS3(encodedImage) {
   return new Promise((resolve, reject) => {
-    let buffer = Buffer.from(encodedImage, "base64");
-    let imagePath = "fotos-grupales/" + Date.now().toString() + ".jpg";
-    let params = {
+    const buffer = Buffer.from(encodedImage, "base64");
+    const imagePath = "fotos-grupales/" + Date.now().toString() + ".jpg";
+    const params = {
       Bucket: "uattendance-photos",
       Key: imagePath,
       Body: buffer,
@@ -48,18 +48,18 @@ function insertIntoDDB(name, photo) {
 }
 
 exports.handler = async (event) => {
+  const data = JSON.parse(event.body);
   try {
-    const image = await uploadImageS3(event.photo);
-    const insert = await insertIntoDDB(event.name, image);
+    const image = await uploadImageS3(data.photo);
+    await insertIntoDDB(data.name, image);
     const response = {
       statusCode: 200,
-      body: insert,
     };
     return response;
   } catch (error) {
     const response = {
       statusCode: 400,
-      body: error,
+      body: JSON.stringify(error),
     };
     return response;
   }
