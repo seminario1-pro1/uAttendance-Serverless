@@ -8,12 +8,12 @@ const DDB = new AWS.DynamoDB({
   secretAccessKey: "CjM90XIPhXvd76lUC16g8rl8wekzr1p6+rcLPjlJ",
 });
 
-function uploadImageS3(encodedImage) {
+function uploadImageS3(name, encodedImage) {
   return new Promise((resolve, reject) => {
     const buffer = Buffer.from(encodedImage, "base64");
-    const imagePath = "fotos-grupales/" + Date.now().toString() + ".jpg";
+    const imagePath = "fotos-grupales/" + name + ".png";
     const params = {
-      Bucket: "uattendance-photos",
+      Bucket: "pro1-images-grupo16",
       Key: imagePath,
       Body: buffer,
       ACL: "public-read",
@@ -50,7 +50,7 @@ function insertIntoDDB(name, photo) {
 exports.handler = async (event) => {
   const data = JSON.parse(event.body);
   try {
-    const image = await uploadImageS3(data.photo);
+    const image = await uploadImageS3(data.name, data.photo);
     await insertIntoDDB(data.name, image);
     const response = {
       statusCode: 200,
