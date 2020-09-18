@@ -19,7 +19,7 @@ function getAllPhotos() {
   });
 }
 
-exports.handler = async (event) => {
+exports.handler = async () => {
   try {
     const photos = await getAllPhotos();
     const response = {
